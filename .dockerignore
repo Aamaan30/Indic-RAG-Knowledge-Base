@@ -1,0 +1,112 @@
+# Git files
+.git
+.gitignore
+.gitattributes
+
+# Python bytecode
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg-info/
+dist/
+build/
+*.egg
+.pytest_cache/
+
+# Virtual environments
+.venv/
+venv/
+env/
+ENV/
+
+# IDE files
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# OS files
+Thumbs.db
+
+# Test files
+tests/
+test_*.py
+*_test.py
+conftest.py
+pytest.ini
+
+# Documentation
+*.md
+README
+docs/
+*.rst
+
+# Log files
+*.log
+logs/
+*.sqlite
+celerybeat-schedule
+
+# Environment files (copy specific ones explicitly if needed)
+.env
+.env.*
+
+# CI/CD
+.github/
+.gitlab-ci.yml
+Jenkinsfile
+.circleci/
+
+# Large data files
+*.csv
+*.txt
+*.db
+*.sqlite
+*.zip
+bulk_*.log
+failed_records_*.csv
+success_records_*.csv
+
+# Migration data
+migration_*.sql
+
+# Backup files
+*_backup*
+*.bak
+
+# Deprecated/old files
+antigravity_backup.zip
+chat_exports/
+chat_exports.zip
+product.txt
+product1.txt
+sample_products.csv
+
+# Script files not needed in container
+analyze_dependencies.py
+build*.sh
+build*.ps1
+deploy*.sh
+ec2_*.sh
+update-services*.sh
+
+# Alembic (if not needed at runtime, copy separately if needed)
+# alembic.ini
+# alembic/
+
+# Docker files
+Dockerfile*
+docker-compose*.yml
+.dockerignore
+.swagger.json
+# Common package (will be installed from GitHub)
+
+# Dependencies analysis
+requirements_optimized/
+
+test/
+load_tests

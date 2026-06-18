@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Indic-RAG Knowledge Base</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <style>
+        .loader {
+            border: 3px solid #334155; /* slate-700 */
+            border-top: 3px solid #818cf8; /* indigo-400 */
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .markdown-body { color: #f1f5f9; }
+        .markdown-body p { margin-bottom: 1rem; line-height: 1.7; }
+        .markdown-body h1, .markdown-body h2, .markdown-body h3 { font-weight: 600; margin-bottom: 0.75rem; color: #a5b4fc; margin-top: 1.5rem; }
+        .markdown-body ul, .markdown-body ol { padding-left: 1.5rem; margin-bottom: 1rem; }
+        .markdown-body ul { list-style-type: disc; }
+        .markdown-body ol { list-style-type: decimal; }
+        .markdown-body li { margin-bottom: 0.5rem; }
+        .markdown-body pre { background: #0f172a; padding: 1rem; border-radius: 0.5rem; overflow-x: auto; margin-bottom: 1rem; border: 1px solid #1e293b; }
+        .markdown-body code { font-family: monospace; color: #38bdf8; background: #0f172a; padding: 0.2rem 0.4rem; border-radius: 0.25rem; font-size: 0.875em;}
+        .markdown-body pre code { background: transparent; padding: 0; }
+        .markdown-body blockquote { border-left: 4px solid #4f46e5; padding-left: 1rem; color: #cbd5e1; font-style: italic; margin-bottom: 1rem; }
+        
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #0f172a; }
+        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #475569; }
+    </style>
+</head>
+<body class="bg-slate-900 text-slate-100 font-sans h-screen flex flex-col overflow-hidden">
+    <!-- Header -->
+    <header class="bg-slate-950 border-b border-slate-800 p-4 shrink-0 shadow-sm z-10">
+        <div class="max-w-screen-2xl mx-auto flex items-center justify-between">
+            <h1 class="text-2xl font-semibold text-indigo-400 tracking-wide flex items-center gap-2">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
+                Indic-RAG <span class="text-slate-500 font-light text-xl mt-0.5">Knowledge Base</span>
+            </h1>
+        </div>
+    </header>
+
+    <!-- Main Workspace -->
+    <main class="flex-1 max-w-screen-2xl w-full mx-auto flex flex-col md:flex-row overflow-hidden">
+        
+        <!-- Left Sidebar: Semantic Verse Finder -->
+        <aside class="w-full md:w-1/3 lg:w-1/4 border-r border-slate-800 bg-slate-900/50 flex flex-col h-full shrink-0">
+            <div class="p-4 border-b border-slate-800 shrink-0">
+                <h2 class="text-sm font-semibold text-slate-400 uppercase tracking-wider mb-3">Semantic Verse Finder</h2>
+                <form id="search-form" class="relative">
+                    <input type="text" id="search-input" class="w-full bg-slate-950 border border-slate-700 rounded-lg py-2.5 pl-4 pr-10 text-slate-200 outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all placeholder-slate-600 shadow-inner" placeholder="Search verses...">
+                    <button type="submit" class="absolute right-2 top-1/2 -translate-y-1/2 p-1.5 text-slate-400 hover:text-indigo-400 transition-colors">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                    </button>
+                </form>
+                <div id="search-error" class="hidden mt-2 text-xs text-rose-400 bg-rose-950/30 p-2 rounded border border-rose-900/50"></div>
+            </div>
+            
+            <div id="search-results" class="flex-1 overflow-y-auto p-4 flex flex-col gap-3">
+                <div class="text-slate-500 text-sm text-center mt-10">
+                    <p>Search results will appear here.</p>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Right Main Panel: Deep Scholar AI -->
+        <section class="flex-1 flex flex-col bg-slate-950 h-full relative">
+            
+            <div class="p-4 border-b border-slate-800 shrink-0 bg-slate-900/80 flex items-center justify-between">
+                <h2 class="text-lg font-medium text-slate-200 flex items-center gap-2">
+                    <svg class="w-5 h-5 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"></path></svg>
+                    Deep Scholar AI Analysis
+                </h2>
+            </div>
+            
+            <!-- Explanation Area -->
+            <div id="explain-output" class="flex-1 overflow-y-auto p-6 lg:p-10">
+                <div class="flex items-center justify-center h-full text-slate-600">
+                    <div class="text-center max-w-md">
+                        <svg class="w-16 h-16 mx-auto mb-4 opacity-20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path></svg>
+                        <p class="text-lg">Ask for a philosophical breakdown or explanation of any concept within the texts.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Input Area -->
+            <div class="p-4 border-t border-slate-800 bg-slate-900 shrink-0">
+                <div id="explain-error" class="hidden mb-2 text-xs text-rose-400 bg-rose-950/30 p-2 rounded border border-rose-900/50 w-full max-w-4xl mx-auto"></div>
+                <form id="explain-form" class="max-w-4xl mx-auto relative">
+                    <textarea id="explain-input" rows="2" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-4 pr-16 text-slate-200 outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all placeholder-slate-500 resize-none shadow-inner" placeholder="E.g., What does the text say about detachment and duty?"></textarea>
+                    <button type="submit" id="explain-submit-btn" class="absolute right-3 bottom-3 bg-indigo-600 hover:bg-indigo-500 text-white p-2 rounded-lg transition-colors flex items-center justify-center h-10 w-10 disabled:opacity-50 disabled:cursor-not-allowed">
+                        <svg id="explain-icon" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                        <div id="explain-loader" class="loader hidden"></div>
+                    </button>
+                </form>
+            </div>
+            
+        </section>
+    </main>
+
+    <script>
+        const API_BASE = window.location.origin;
+
+        // Search Form Logic
+        document.getElementById('search-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const input = document.getElementById('search-input');
+            const query = input.value.trim();
+            const errorBox = document.getElementById('search-error');
+            const resultsContainer = document.getElementById('search-results');
+            
+            errorBox.classList.add('hidden');
+            
+            if (!query) {
+                errorBox.textContent = 'Please enter a search term.';
+                errorBox.classList.remove('hidden');
+                return;
+            }
+
+            // Show loading skeleton or spinner
+            resultsContainer.innerHTML = `
+                <div class="flex justify-center p-6">
+                    <div class="loader" style="border-top-color: #818cf8; border-right-color: transparent; border-bottom-color: transparent; border-left-color: transparent;"></div>
+                </div>
+            `;
+
+            try {
+                const res = await fetch(`${API_BASE}/api/search?q=${encodeURIComponent(query)}`);
+                if (!res.ok) throw new Error('Failed to fetch search results.');
+                
+                const data = await res.json();
+                renderSearchResults(data);
+            } catch (err) {
+                errorBox.textContent = err.message || 'Error connecting to the API.';
+                errorBox.classList.remove('hidden');
+                resultsContainer.innerHTML = '';
+            }
+        });
+
+        function renderSearchResults(results) {
+            const container = document.getElementById('search-results');
+            container.innerHTML = '';
+
+            if (!results || results.length === 0) {
+                container.innerHTML = '<div class="text-slate-500 text-sm text-center mt-10">No matching verses found.</div>';
+                return;
+            }
+
+            results.forEach(item => {
+                const score = Math.round(item.similarity_score * 100);
+                const colorClass = score > 80 ? 'text-emerald-400 bg-emerald-400/10 border-emerald-400/20' 
+                                  : score > 60 ? 'text-indigo-400 bg-indigo-400/10 border-indigo-400/20' 
+                                  : 'text-slate-400 bg-slate-800/50 border-slate-700';
+                
+                const card = document.createElement('div');
+                card.className = 'bg-slate-950 border border-slate-800 rounded-lg p-4 hover:border-slate-600 transition-colors shadow-sm';
+                
+                let headerText = [];
+                if (item.chapter) headerText.push(`${item.chapter}`);
+                if (item.verse_num) headerText.push(`Verse ${item.verse_num}`);
+                
+                card.innerHTML = `
+                    <div class="flex justify-between items-start mb-2">
+                        <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">${headerText.join(' • ')}</span>
+                        <span class="text-xs px-2 py-0.5 rounded border ${colorClass} font-medium">${score}% Match</span>
+                    </div>
+                    <p class="text-sm text-slate-300 leading-relaxed">${item.text}</p>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        // Explain Form Logic
+        document.getElementById('explain-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const input = document.getElementById('explain-input');
+            const query = input.value.trim();
+            const errorBox = document.getElementById('explain-error');
+            const outputArea = document.getElementById('explain-output');
+            const btn = document.getElementById('explain-submit-btn');
+            const icon = document.getElementById('explain-icon');
+            const loader = document.getElementById('explain-loader');
+            
+            errorBox.classList.add('hidden');
+            
+            if (!query) {
+                errorBox.textContent = 'Please enter a query for the scholar AI.';
+                errorBox.classList.remove('hidden');
+                return;
+            }
+
+            // UI Loading state
+            input.disabled = true;
+            btn.disabled = true;
+            icon.classList.add('hidden');
+            loader.classList.remove('hidden');
+
+            outputArea.innerHTML = `
+                <div class="flex flex-col items-center justify-center h-full text-slate-400 gap-4 opacity-50">
+                    <div class="loader" style="width: 40px; height: 40px; border-width: 4px; border-top-color: #818cf8;"></div>
+                    <p class="text-sm animate-pulse">Analyzing ancient texts and generating explanation...</p>
+                </div>
+            `;
+
+            try {
+                const res = await fetch(`${API_BASE}/api/explain`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ query })
+                });
+                
+                if (!res.ok) throw new Error('Failed to generate explanation.');
+                
+                const data = await res.json();
+                renderExplanation(data.explanation, query, data.sources);
+            } catch (err) {
+                errorBox.textContent = err.message || 'Error connecting to the API.';
+                errorBox.classList.remove('hidden');
+                outputArea.innerHTML = '';
+            } finally {
+                input.disabled = false;
+                btn.disabled = false;
+                icon.classList.remove('hidden');
+                loader.classList.add('hidden');
+                input.value = '';
+            }
+        });
+
+        function renderExplanation(markdownText, query, sources) {
+            const container = document.getElementById('explain-output');
+            
+            // Build sources HTML if they exist
+            let sourcesHTML = '';
+            if (sources && sources.length > 0) {
+                const sourcesList = sources.map(src => {
+                    let loc = [];
+                    if (src.chapter) loc.push(src.chapter);
+                    if (src.verse_num) loc.push(`v.${src.verse_num}`);
+                    const score = Math.round(src.similarity_score * 100);
+                    return `
+                        <div class="bg-slate-900 border border-slate-700 rounded p-3 text-sm">
+                            <div class="flex justify-between items-center mb-1">
+                                <span class="font-semibold text-slate-300 text-xs">${loc.join(' • ')}</span>
+                                <span class="text-xs text-indigo-400 font-medium">${score}% Match</span>
+                            </div>
+                            <p class="text-slate-400 italic">"${src.text}"</p>
+                        </div>
+                    `;
+                }).join('');
+                
+                sourcesHTML = `
+                    <div class="mt-8 pt-6 border-t border-slate-800">
+                        <h4 class="text-sm font-semibold text-slate-400 uppercase tracking-wider mb-4">Cited Sources</h4>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            ${sourcesList}
+                        </div>
+                    </div>
+                `;
+            }
+
+            container.innerHTML = `
+                <div class="max-w-4xl mx-auto pb-8">
+                    <h3 class="text-xl font-medium text-white mb-6 pb-4 border-b border-slate-800">
+                        <span class="text-slate-500 text-sm block mb-1">Scholar Analysis for:</span>
+                        "${query}"
+                    </h3>
+                    <div class="markdown-body text-base">
+                        ${marked.parse(markdownText)}
+                    </div>
+                    ${sourcesHTML}
+                </div>
+            `;
+            container.scrollTop = 0;
+        }
+
+        // Handle Enter key for textarea
+        document.getElementById('explain-input').addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                document.getElementById('explain-form').dispatchEvent(new Event('submit'));
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,35 @@
+version: '3.8'
+
+services:
+  db:
+    image: ankane/pgvector:latest
+    environment:
+      POSTGRES_USER: indic_user
+      POSTGRES_PASSWORD: indic_password
+      POSTGRES_DB: indic_db
+    ports:
+      - "5433:5432"
+    volumes:
+      - indic_postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U indic_user -d indic_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+#  web:
+#    build: .
+#    command: uvicorn main:app --host 0.0.0.0 --port 8000 --reload
+#    volumes:
+#      - .:/app
+#    ports:
+#      - "8001:8000"
+#    environment:
+#      - DATABASE_URL=postgresql+asyncpg://indic_user:indic_password@db:5432/indic_db
+#      - GROQ_API_KEY=${GROQ_API_KEY:-}
+#    depends_on:
+#      db:
+#        condition: service_healthy
+
+volumes:
+  indic_postgres_data:

@@ -1,0 +1,15 @@
+fastapi
+uvicorn[standard]
+sqlalchemy
+asyncpg
+pgvector
+pydantic
+pydantic-settings
+langchain
+langchain-groq
+langchain-huggingface
+sentence-transformers
+pypdf
+alembic
+greenlet
+typer
