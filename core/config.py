@@ -4,7 +4,7 @@ from pydantic_settings import BaseSettings
 
 class Settings(BaseSettings):
     PROJECT_NAME: str = "Indic-RAG Knowledge Base"
-    DATABASE_URL: str = "postgresql+asyncpg://indic_user:indic_password@localhost:5433/indic_db"
+    DATABASE_URL: str = os.getenv("DATABASE_URL")
     GROQ_API_KEY = os.getenv("GROQ_API_KEY")
     
     class Config:
