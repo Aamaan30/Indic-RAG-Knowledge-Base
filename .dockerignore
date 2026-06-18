@@ -63,7 +63,7 @@ Jenkinsfile
 
 # Large data files
 *.csv
-*.txt
+
 *.db
 *.sqlite
 *.zip
